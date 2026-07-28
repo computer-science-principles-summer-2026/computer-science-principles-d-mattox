@@ -1,0 +1,93 @@
+from cImage import *
+
+# Flip image left to right
+def verticalFlip(oldImage):
+    oldW = oldImage.getWidth()
+    oldH = oldImage.getHeight()
+
+    newIm = EmptyImage(oldW, oldH)
+    maxP = oldW - 1
+
+    for row in range(oldH):
+        for col in range(oldW):
+            oldPixel = oldImage.getPixel(maxP - col, row)
+            newIm.setPixel(col, row, oldPixel)
+
+    return newIm
+
+
+# Flip image top to bottom
+def horizontalFlip(oldImage):
+    oldW = oldImage.getWidth()
+    oldH = oldImage.getHeight()
+
+    newIm = EmptyImage(oldW, oldH)
+    maxRow = oldH - 1
+
+    for row in range(oldH):
+        for col in range(oldW):
+            oldPixel = oldImage.getPixel(col, maxRow - row)
+            newIm.setPixel(col, row, oldPixel)
+
+    return newIm
+
+
+# Mirror the image so the left side is copied to the right
+def mirror(oldImage):
+    oldW = oldImage.getWidth()
+    oldH = oldImage.getHeight()
+
+    # Start with a copy of the original image
+    newIm = EmptyImage(oldW, oldH)
+
+    for row in range(oldH):
+        for col in range(oldW):
+            newIm.setPixel(col, row, oldImage.getPixel(col, row))
+
+    midpoint = oldW // 2
+
+    for row in range(oldH):
+        for col in range(midpoint):
+            leftPixel = oldImage.getPixel(col, row)
+            rightCol = oldW - 1 - col
+            newIm.setPixel(rightCol, row, leftPixel)
+
+    return newIm
+
+
+def processImage(imageFile, choice):
+    oldImage = FileImage(imageFile)
+
+    width = oldImage.getWidth()
+    height = oldImage.getHeight()
+
+    myWin = ImageWin("Image Processing", width * 2, height)
+
+    oldImage.draw(myWin)
+
+    if choice == "1":
+        newImage = verticalFlip(oldImage)
+    elif choice == "2":
+        newImage = horizontalFlip(oldImage)
+    elif choice == "3":
+        newImage = mirror(oldImage)
+    else:
+        print("Invalid choice.")
+        return
+
+    newImage.setPosition(width + 1, 0)
+    newImage.draw(myWin)
+
+    myWin.exitOnClick()
+
+
+# Main Program
+print("Image Processing Menu")
+print("1 - Vertical Flip")
+print("2 - Horizontal Flip")
+print("3 - Mirror")
+
+choice = input("Enter your choice (1-3): ")
+filename = input("Enter the image filename: ")
+
+processImage(filename, choice)
